@@ -1,0 +1,2 @@
+run_accession	sample_accession	experiment_accession	study_accession	tax_id	scientific_name	fastq_ftp	sra_ftp	bam_ftp
+SRR1734369	SAMN03220396	SRX768344	PRJNA268515	408170	human gut metagenome	ftp.sra.ebi.ac.uk/vol1/fastq/SRR173/009/SRR1734369/SRR1734369_1.fastq.gz;ftp.sra.ebi.ac.uk/vol1/fastq/SRR173/009/SRR1734369/SRR1734369_2.fastq.gz	ftp.sra.ebi.ac.uk/vol1/srr/SRR173/009/SRR1734369.lite	
