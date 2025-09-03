@@ -44,20 +44,26 @@ This project addresses these challenges by:
 
 > Note: XGBoost was also tested for non-linear benchmarking, but the final reproducible pipeline relies on **Elastic Net + Ridge SHAP** for interpretability.  
 
-## Key Findings  
-- **Protective taxa (↓ in PD):** SCFA/butyrate producers (Agathobacter, Ruminococcus, Bifidobacterium, etc.)  
-- **Risk-associated taxa (↑ in PD):** Akkermansia, UBA1819, other pathogenic/barrier-damaging genera  
-- Linear SHAP confirmed consistent signals across folds, while non-linear exploration suggested potential interaction effects  
-
-## Requirements & How to Run  
+## Requirements
 - Python 3.10+  
-- Conda environment (`pdgut`)  
-- Main dependencies: `qiime2`, `scikit-learn`, `xgboost`, `shap`
+- Main dependencies: `qiime2`, `scikit-learn`, `xgboost`, `shap` ..
 
 ## Next Steps
 - Extend dataset integration (16S + shotgun metagenomics)
 - Analyze PD progression stages (early vs advanced PD)
 - Collaborate with wet-lab teams for experimental validation of candidate taxa
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -97,9 +103,9 @@ Machine learning-based meta-analysis reveals gut microbiome alterations associat
         리눅스 wget 병렬 처리 방식 사용하여 속도 향상
         다운로드 완료 후 QIIME2 입력용 manifest.csv 작성 예정
 
-  </details>
-
     - 메타데이터 XML 파싱 정제 스크립트 개선
         meta2csv.py 작성하여 다양한 태그(ex. title, scientific_name, host, env_material 등)를 선택적으로 추출
         결측/중복 제거 및 의미 있는 feature만 유지하도록 구성
         샘플 기반 분석 가능하도록 컬럼 정리된 형태로 저장
+
+  </details>
