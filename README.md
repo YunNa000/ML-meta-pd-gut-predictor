@@ -1,4 +1,63 @@
-# meta-pd-gut-predictor
+# AI-driven Gut Microbiome Analysis for Early Parkinson’s Detection
+
+## Overview  
+This repository contains the code and analysis pipeline developed during my **KAIST KAM Lab internship (Summer 2025)**.  
+The project investigates the gut microbiome of Parkinson’s disease (PD) patients and controls using **integrative 16S rRNA sequencing data analysis**, with the goal of identifying **reproducible microbial biomarkers** and building **machine learning models for prediction**.  
+
+## Motivation  
+Parkinson’s disease is often preceded by gastrointestinal symptoms, indicating a strong connection with the **gut–brain axis**. However, previous studies have produced inconsistent results due to dataset heterogeneity and the limitations of linear models.  
+This project addresses these challenges by:  
+- Integrating and harmonizing multiple publicly available datasets  
+- Applying both **linear and non-linear models** for interpretability and predictive power  
+- Proposing candidate microbial taxa that can be extended to **wet-lab validation**  
+
+## Data  
+- **Samples:** 653 stool samples (PD vs Control)  
+- **Features:** 1,137 genus-level abundance profiles  
+- **Sources:** ENA public projects (PRJEB14928, PRJEB27564, PRJNA391524, PRJNA494620, PRJEB30615) + -Zenodo metadata (Boktor et al., Wallen et al.)- 
+- **Preprocessing:**  
+  - QIIME2 (DADA2 denoising, taxonomy assignment)  
+  - Aggregation to genus level, relative abundance transformation  
+  - -ComBat batch correction based on project_id-
+
+## Analysis Pipeline  
+1. **Exploratory Data Analysis (EDA)**  
+   - UMAP visualization: overlap between PD and Control → motivates non-linear modeling  
+   - Alpha diversity (Shannon): no significant difference (p=0.7119)  
+   - Beta diversity (Bray-Curtis + PERMANOVA): significant community structure differences (p=0.003)  
+
+2. **Feature Selection**  
+   - Lasso logistic regression (5-fold CV, ROC AUC-based)  
+
+3. **Modeling**  
+   - XGBoost (η=0.03, max_depth=4, subsample=0.8, colsample_bytree=0.8)  
+   - Performance: ROC AUC=0.79, PR AUC=0.78, Brier score=0.19  
+
+4. **Interpretability**  
+   - SHAP values for non-linear feature interpretation  
+   - Linear SHAP + coefficient sign alignment for robust validation  
+   - Biological mapping of protective vs risk-associated bacteria  
+
+## Key Findings  
+- **Protective taxa (↓ in PD):** SCFA/butyrate producers (Agathobacter, Ruminococcus, Bifidobacterium, etc.)  
+- **Risk-associated taxa (↑ in PD):** Akkermansia, UBA1819, other pathogenic/barrier-damaging genera  
+- Non-linear SHAP interpretation revealed **interaction effects** missed by linear models  
+
+
+## Requirements & How to Run  
+- Python 3.10+  
+- Conda environment (`pdgut`)  
+- Main dependencies: `qiime2`, `scikit-learn`, `xgboost`, `shap`
+
+## Next Steps
+- Extend dataset integration (16S + shotgun metagenomics)
+- Analyze PD progression stages (early vs advanced PD)
+- Collaborate with wet-lab teams for experimental validation of candidate taxa
+
+
+
+
+------>>>------
 KAISTNUERO | ML-driven Meta-Analysis of the Gut Microbiome in Body-First Parkinson’s Disease
 
 - Data
