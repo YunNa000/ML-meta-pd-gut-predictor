@@ -2,47 +2,52 @@
 
 ## Overview  
 This repository contains the code and analysis pipeline developed during my **KAIST KAM Lab internship (Summer 2025)**.  
-The project investigates the gut microbiome of Parkinson’s disease (PD) patients and controls using **integrative 16S rRNA sequencing data analysis**, with the goal of identifying **reproducible microbial biomarkers** and building **machine learning models for prediction**.  
+The project investigates the gut microbiome of Parkinson’s disease (PD) patients and controls using **integrative 16S rRNA sequencing data analysis**, with the goal of identifying **reproducible microbial biomarkers** and building **interpretable machine learning models**.  
 
 ## Motivation  
 Parkinson’s disease is often preceded by gastrointestinal symptoms, indicating a strong connection with the **gut–brain axis**. However, previous studies have produced inconsistent results due to dataset heterogeneity and the limitations of linear models.  
 This project addresses these challenges by:  
 - Integrating and harmonizing multiple publicly available datasets  
-- Applying both **linear and non-linear models** for interpretability and predictive power  
+- Applying **regularized linear models (Elastic Net, Ridge)** with SHAP-based interpretation  
+- Ensuring reproducibility through **project-wise cross-validation**  
 - Proposing candidate microbial taxa that can be extended to **wet-lab validation**  
 
 ## Data  
 - **Samples:** 653 stool samples (PD vs Control)  
 - **Features:** 1,137 genus-level abundance profiles  
-- **Sources:** ENA public projects (PRJEB14928, PRJEB27564, PRJNA391524, PRJNA494620, PRJEB30615) + -Zenodo metadata (Boktor et al., Wallen et al.)- 
+- **Sources:** ENA public projects (PRJEB14928, PRJEB27564, PRJNA391524, PRJNA494620, PRJEB30615) + ~~Zenodo metadata (Boktor et al., Wallen et al.)~~
 - **Preprocessing:**  
   - QIIME2 (DADA2 denoising, taxonomy assignment)  
   - Aggregation to genus level, relative abundance transformation  
-  - -ComBat batch correction based on project_id-
+  - ~~ComBat batch correction based on project_id~~
 
 ## Analysis Pipeline  
 1. **Exploratory Data Analysis (EDA)**  
-   - UMAP visualization: overlap between PD and Control → motivates non-linear modeling  
+   - UMAP visualization: overlap between PD and Control → motivates non-linear exploration  
    - Alpha diversity (Shannon): no significant difference (p=0.7119)  
    - Beta diversity (Bray-Curtis + PERMANOVA): significant community structure differences (p=0.003)  
 
 2. **Feature Selection**  
-   - Lasso logistic regression (5-fold CV, ROC AUC-based)  
+   - **Elastic Net Logistic Regression** (L1+L2 regularization)  
+   - 5-fold cross-validation stratified by project_id  
 
 3. **Modeling**  
-   - XGBoost (η=0.03, max_depth=4, subsample=0.8, colsample_bytree=0.8)  
-   - Performance: ROC AUC=0.79, PR AUC=0.78, Brier score=0.19  
+   - **Elastic Net Logistic Regression**: main predictive model  
+   - **Ridge Logistic Regression**: used for SHAP-based interpretation and coefficient sign consistency  
+   - Cross-validation strategies: **StratifiedGroupKFold** and **Leave-One-Group-Out (LOGO)** by project  
+   - Performance: ROC AUC ~0.75–0.78, PR AUC ~0.74–0.77, Brier score ~0.20  
 
 4. **Interpretability**  
-   - SHAP values for non-linear feature interpretation  
-   - Linear SHAP + coefficient sign alignment for robust validation  
+   - Linear SHAP values for transparent feature importance  
+   - Coefficient sign alignment across folds for robust signal extraction  
    - Biological mapping of protective vs risk-associated bacteria  
+
+> Note: XGBoost was also tested for non-linear benchmarking, but the final reproducible pipeline relies on **Elastic Net + Ridge SHAP** for interpretability.  
 
 ## Key Findings  
 - **Protective taxa (↓ in PD):** SCFA/butyrate producers (Agathobacter, Ruminococcus, Bifidobacterium, etc.)  
 - **Risk-associated taxa (↑ in PD):** Akkermansia, UBA1819, other pathogenic/barrier-damaging genera  
-- Non-linear SHAP interpretation revealed **interaction effects** missed by linear models  
-
+- Linear SHAP confirmed consistent signals across folds, while non-linear exploration suggested potential interaction effects  
 
 ## Requirements & How to Run  
 - Python 3.10+  
@@ -57,7 +62,7 @@ This project addresses these challenges by:
 
 
 
------->>>------
+<details>
 KAISTNUERO | ML-driven Meta-Analysis of the Gut Microbiome in Body-First Parkinson’s Disease
 
 - Data
@@ -91,6 +96,8 @@ Machine learning-based meta-analysis reveals gut microbiome alterations associat
         16S_Sequencing_data/data/fastq/ 내 각 run_accession 별로 paired-end FASTQ 파일 다운로드
         리눅스 wget 병렬 처리 방식 사용하여 속도 향상
         다운로드 완료 후 QIIME2 입력용 manifest.csv 작성 예정
+
+  </details>
 
     - 메타데이터 XML 파싱 정제 스크립트 개선
         meta2csv.py 작성하여 다양한 태그(ex. title, scientific_name, host, env_material 등)를 선택적으로 추출
